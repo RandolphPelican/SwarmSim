@@ -19,6 +19,9 @@ from statistical_analysis import (
     perform_comprehensive_causal_analysis, create_regression_plot,
     create_anova_boxplot, create_effect_size_plot, generate_statistical_report
 )
+from batch_experiments import (
+    BatchExperimentRunner, AutomatedReportGenerator, create_batch_template
+)
 import json
 import time
 
@@ -39,13 +42,18 @@ if 'bandwidth_results' not in st.session_state:
     st.session_state.bandwidth_results = None
 if 'causal_results' not in st.session_state:
     st.session_state.causal_results = None
+if 'batch_runner' not in st.session_state:
+    st.session_state.batch_runner = BatchExperimentRunner()
+if 'batch_results' not in st.session_state:
+    st.session_state.batch_results = None
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "🎮 Interactive Simulation", 
     "📊 Bandwidth Analysis", 
     "🔬 Causal Testing",
     "📈 Analytics Dashboard",
     "🧠 Behavior Analysis",
+    "🔄 Batch Experiments",
     "💾 Export Data"
 ])
 
@@ -707,6 +715,200 @@ with tab5:
         st.info("Run a simulation to see behavior analysis")
 
 with tab6:
+    st.header("Batch Experiments")
+    st.markdown("Run multiple experiments in parallel with automated analysis and reporting")
+    
+    col1, col2 = st.columns([1, 2])
+    
+    with col1:
+        st.subheader("Experiment Configuration")
+        
+        template_type = st.selectbox(
+            "Start from template",
+            ["Custom", "Bandwidth Sweep", "Agent Scaling", "Vision Range"]
+        )
+        
+        if template_type != "Custom":
+            template_map = {
+                "Bandwidth Sweep": "bandwidth_sweep",
+                "Agent Scaling": "agent_scaling",
+                "Vision Range": "vision_range"
+            }
+            
+            if st.button("Load Template"):
+                st.session_state.batch_runner = BatchExperimentRunner()
+                template_experiments = create_batch_template(template_map[template_type])
+                
+                for exp in template_experiments:
+                    config = exp['config'].copy()
+                    config.setdefault('world_size', 15)
+                    config.setdefault('num_agents', 8)
+                    config.setdefault('num_food', 10)
+                    config.setdefault('num_dangers', 5)
+                    config.setdefault('bandwidth_bits', 1000)
+                    config.setdefault('vision_radius', 3)
+                    config.setdefault('num_steps', 30)
+                    config.setdefault('seed', 42)
+                    
+                    st.session_state.batch_runner.add_experiment(exp['name'], config)
+                
+                st.success(f"Loaded {len(template_experiments)} experiments from template")
+        
+        st.divider()
+        
+        with st.expander("➕ Add Custom Experiment"):
+            exp_name = st.text_input("Experiment Name", value=f"Experiment {len(st.session_state.batch_runner.experiments) + 1}")
+            
+            col_c1, col_c2 = st.columns(2)
+            
+            with col_c1:
+                num_agents_batch = st.number_input("Agents", 2, 20, 8, key='batch_agents')
+                bandwidth_batch = st.number_input("Bandwidth", 100, 100000, 1000, key='batch_bw')
+                vision_batch = st.number_input("Vision", 1, 10, 3, key='batch_vision')
+            
+            with col_c2:
+                num_food_batch = st.number_input("Food", 5, 30, 10, key='batch_food')
+                num_dangers_batch = st.number_input("Dangers", 2, 15, 5, key='batch_dangers')
+                num_runs_batch = st.number_input("Runs per experiment", 1, 20, 5, key='batch_runs')
+            
+            if st.button("Add to Batch"):
+                config = {
+                    'world_size': 15,
+                    'num_agents': num_agents_batch,
+                    'num_food': num_food_batch,
+                    'num_dangers': num_dangers_batch,
+                    'bandwidth_bits': bandwidth_batch,
+                    'vision_radius': vision_batch,
+                    'num_steps': 30,
+                    'num_runs': num_runs_batch,
+                    'seed': 42
+                }
+                
+                st.session_state.batch_runner.add_experiment(exp_name, config)
+                st.success(f"Added '{exp_name}' to batch")
+                st.rerun()
+        
+        st.divider()
+        
+        if st.session_state.batch_runner.experiments:
+            st.write(f"**{len(st.session_state.batch_runner.experiments)} experiments** in batch")
+            
+            if st.button("Clear All"):
+                st.session_state.batch_runner = BatchExperimentRunner()
+                st.rerun()
+        
+        st.divider()
+        
+        if st.session_state.batch_runner.experiments:
+            if st.button("🚀 Run Batch", use_container_width=True, type="primary"):
+                with st.spinner("Running batch experiments..."):
+                    progress_bar = st.progress(0)
+                    
+                    def update_progress(p):
+                        progress_bar.progress(p)
+                    
+                    results = st.session_state.batch_runner.run_batch(update_progress)
+                    st.session_state.batch_results = results
+                    
+                st.success("Batch complete!")
+                st.rerun()
+        else:
+            st.info("Add experiments to the batch to begin")
+    
+    with col2:
+        if st.session_state.batch_runner.experiments and not st.session_state.batch_results:
+            st.subheader("Queued Experiments")
+            
+            for idx, exp in enumerate(st.session_state.batch_runner.experiments):
+                with st.expander(f"📋 {exp['name']}", expanded=(idx == 0)):
+                    config = exp['config']
+                    
+                    col_e1, col_e2, col_e3 = st.columns(3)
+                    with col_e1:
+                        st.metric("Agents", config.get('num_agents', 8))
+                        st.metric("Bandwidth", config.get('bandwidth_bits', 1000))
+                    with col_e2:
+                        st.metric("Food", config.get('num_food', 10))
+                        st.metric("Dangers", config.get('num_dangers', 5))
+                    with col_e3:
+                        st.metric("Vision", config.get('vision_radius', 3))
+                        st.metric("Runs", config.get('num_runs', 5))
+        
+        elif st.session_state.batch_results:
+            st.subheader("Batch Results")
+            
+            report_gen = AutomatedReportGenerator(st.session_state.batch_results)
+            report = report_gen.generate_full_report()
+            
+            st.markdown("**Executive Summary:**")
+            exec_sum = report['executive_summary']
+            
+            col_r1, col_r2 = st.columns(2)
+            
+            with col_r1:
+                st.success(f"**Best:** {exec_sum['best_experiment']}")
+                st.metric("Efficiency", f"{exec_sum['best_efficiency']:.2f}")
+            
+            with col_r2:
+                st.error(f"**Worst:** {exec_sum['worst_experiment']}")
+                st.metric("Efficiency", f"{exec_sum['worst_efficiency']:.2f}")
+            
+            st.metric("Mean Across All", f"{exec_sum['mean_across_all']:.2f} ± {exec_sum['std_across_all']:.2f}")
+            
+            st.divider()
+            
+            st.subheader("Comparisons")
+            
+            tab_comp1, tab_comp2, tab_comp3 = st.tabs(["Efficiency", "Coordination", "Radar"])
+            
+            with tab_comp1:
+                fig_eff = report['visualizations']['efficiency_comparison']
+                st.plotly_chart(fig_eff, use_container_width=True)
+            
+            with tab_comp2:
+                fig_coord = report['visualizations']['coordination_comparison']
+                st.plotly_chart(fig_coord, use_container_width=True)
+            
+            with tab_comp3:
+                fig_radar = report['visualizations']['radar_chart']
+                if fig_radar:
+                    st.plotly_chart(fig_radar, use_container_width=True)
+                else:
+                    st.info("Radar chart available for ≤5 experiments")
+            
+            st.divider()
+            
+            comparison = st.session_state.batch_runner.generate_comparison_report()
+            
+            if comparison and comparison['statistical_analysis']:
+                st.subheader("Statistical Analysis")
+                stats = comparison['statistical_analysis']
+                
+                col_s1, col_s2, col_s3 = st.columns(3)
+                
+                with col_s1:
+                    st.metric("F-Statistic", f"{stats['f_statistic']:.2f}")
+                with col_s2:
+                    st.metric("p-value", f"{stats['p_value']:.4f}")
+                with col_s3:
+                    sig_icon = "✅" if stats['significant'] else "❌"
+                    st.metric("Significant", sig_icon)
+            
+            st.divider()
+            
+            st.subheader("Detailed Results")
+            summary_df = comparison['summary']
+            st.dataframe(summary_df, use_container_width=True, hide_index=True)
+            
+            if st.button("Clear Results"):
+                st.session_state.batch_results = None
+                st.session_state.batch_runner = BatchExperimentRunner()
+                st.rerun()
+        
+        else:
+            st.info("Configure and run experiments to see results")
+
+with tab7:
     st.header("Export Data")
     
     col1, col2 = st.columns(2)
