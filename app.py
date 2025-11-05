@@ -14,6 +14,11 @@ from advanced_visualizations import (
     create_agent_efficiency_comparison, create_message_flow_network,
     create_coordination_timeline, create_exploration_coverage_map
 )
+from statistical_analysis import (
+    perform_anova_analysis, perform_regression_analysis,
+    perform_comprehensive_causal_analysis, create_regression_plot,
+    create_anova_boxplot, create_effect_size_plot, generate_statistical_report
+)
 import json
 import time
 
@@ -252,6 +257,67 @@ with tab2:
                 height=350
             )
             st.plotly_chart(fig_coord, use_container_width=True)
+            
+            st.divider()
+            st.subheader("📊 Statistical Analysis")
+            
+            tab_stats1, tab_stats2 = st.tabs(["ANOVA", "Regression"])
+            
+            with tab_stats1:
+                st.markdown("**One-Way ANOVA:** Testing if bandwidth groups differ significantly")
+                
+                anova_results = perform_anova_analysis(results)
+                
+                if anova_results:
+                    col_a1, col_a2, col_a3 = st.columns(3)
+                    
+                    with col_a1:
+                        st.metric("F-Statistic", f"{anova_results['f_statistic']:.2f}")
+                    with col_a2:
+                        st.metric("p-value", f"{anova_results['p_value']:.4f}")
+                    with col_a3:
+                        sig_icon = "✅" if anova_results['significant'] else "❌"
+                        st.metric("Significant (α=0.05)", sig_icon)
+                    
+                    if anova_results['significant']:
+                        st.success("Significant differences detected between bandwidth groups!")
+                    else:
+                        st.warning("No significant differences between groups")
+                    
+                    fig_anova = create_anova_boxplot(anova_results)
+                    st.plotly_chart(fig_anova, use_container_width=True)
+                    
+                    with st.expander("View Tukey HSD Post-hoc Test"):
+                        st.text(str(anova_results['tukey_hsd']))
+                else:
+                    st.info("Need at least 2 bandwidth levels for ANOVA")
+            
+            with tab_stats2:
+                st.markdown("**Regression Analysis:** Testing for inverted U-curve relationship")
+                
+                regression_results = perform_regression_analysis(results)
+                
+                if regression_results:
+                    col_r1, col_r2 = st.columns(2)
+                    
+                    with col_r1:
+                        st.metric("Linear R²", f"{regression_results['linear_r2']:.3f}")
+                    with col_r2:
+                        if regression_results['quadratic_r2']:
+                            st.metric("Quadratic R²", f"{regression_results['quadratic_r2']:.3f}")
+                    
+                    if regression_results['has_inverted_u']:
+                        st.success(f"✅ Inverted U-curve detected! Optimal bandwidth: {regression_results['optimal_bandwidth']:.0f} bits")
+                    else:
+                        st.info("No clear inverted U-curve pattern")
+                    
+                    fig_reg = create_regression_plot(regression_results)
+                    st.plotly_chart(fig_reg, use_container_width=True)
+                    
+                    with st.expander("View OLS Summary"):
+                        st.text(str(regression_results['ols_summary']))
+                else:
+                    st.info("Need at least 3 bandwidth levels for regression")
         
         else:
             st.info("Run a bandwidth sweep to see results")
@@ -383,6 +449,56 @@ with tab3:
                 st.write(f"- Constraint removal effect (A→B): {results['drop']:+.2f}")
                 st.write(f"- Constraint restoration effect (B→C): {results['recovery']:+.2f}")
                 st.write(f"- Consistency (|A-C|): {results['consistency']:.2f}")
+            
+            st.divider()
+            st.subheader("📊 Advanced Statistical Analysis")
+            
+            causal_stats = perform_comprehensive_causal_analysis(results)
+            
+            st.markdown("**Pairwise Comparisons (t-tests):**")
+            
+            col_t1, col_t2, col_t3 = st.columns(3)
+            
+            with col_t1:
+                st.metric("A vs B", 
+                         f"p = {causal_stats['t_test_a_vs_b']['p']:.4f}",
+                         help=f"t = {causal_stats['t_test_a_vs_b']['t']:.2f}")
+            with col_t2:
+                st.metric("B vs C",
+                         f"p = {causal_stats['t_test_b_vs_c']['p']:.4f}",
+                         help=f"t = {causal_stats['t_test_b_vs_c']['t']:.2f}")
+            with col_t3:
+                st.metric("A vs C",
+                         f"p = {causal_stats['t_test_a_vs_c']['p']:.4f}",
+                         help=f"t = {causal_stats['t_test_a_vs_c']['t']:.2f}")
+            
+            st.markdown("**Overall ANOVA:**")
+            col_ov1, col_ov2 = st.columns(2)
+            
+            with col_ov1:
+                st.metric("F-Statistic", f"{causal_stats['overall_f']:.2f}")
+            with col_ov2:
+                st.metric("p-value", f"{causal_stats['overall_p']:.4f}")
+            
+            st.markdown("**Effect Sizes (Cohen's d):**")
+            
+            fig_effect = create_effect_size_plot(causal_stats)
+            st.plotly_chart(fig_effect, use_container_width=True)
+            
+            col_e1, col_e2, col_e3 = st.columns(3)
+            
+            with col_e1:
+                st.metric("A vs B",
+                         f"{causal_stats['effect_size_a_vs_b']['cohens_d']:.2f}",
+                         help=causal_stats['effect_size_a_vs_b']['interpretation'])
+            with col_e2:
+                st.metric("B vs C",
+                         f"{causal_stats['effect_size_b_vs_c']['cohens_d']:.2f}",
+                         help=causal_stats['effect_size_b_vs_c']['interpretation'])
+            with col_e3:
+                st.metric("A vs C",
+                         f"{causal_stats['effect_size_a_vs_c']['cohens_d']:.2f}",
+                         help=causal_stats['effect_size_a_vs_c']['interpretation'])
         
         else:
             st.info("Run a causal test to see results")
