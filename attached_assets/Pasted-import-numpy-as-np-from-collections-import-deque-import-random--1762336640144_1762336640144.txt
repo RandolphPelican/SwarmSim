@@ -1,0 +1,414 @@
+import numpy as np
+from collections import deque
+import random
+
+# ============================================================================
+# PART 1: COORDINATION AGENT (uses messages for decisions)
+# ============================================================================
+
+class CoordinationAgent:
+    """Agent that USES received messages to make decisions"""
+    
+    def __init__(self, agent_id, world_size=15):
+        self.agent_id = agent_id
+        self.world_size = world_size
+        self.position = (random.randint(0, world_size-1), random.randint(0, world_size-1))
+        self.message_success_history = deque(maxlen=10)
+        
+        # Store received messages
+        self.received_food_alerts = []
+        self.received_danger_warnings = []
+    
+    def generate_message(self, environment_state):
+        """Generate messages about what agent can SEE (vision radius = 3)"""
+        messages = []
+        vision_radius = 3
+        
+        # Check for nearby food
+        for food_pos in environment_state.get('food_locations', []):
+            dist = abs(food_pos[0] - self.position[0]) + abs(food_pos[1] - self.position[1])
+            if dist <= vision_radius:
+                messages.append({
+                    'type': 'food_alert',
+                    'position': food_pos,
+                    'importance': 0.8,
+                    'agent_id': self.agent_id
+                })
+        
+        # Check for nearby dangers
+        for danger_pos in environment_state.get('danger_locations', []):
+            dist = abs(danger_pos[0] - self.position[0]) + abs(danger_pos[1] - self.position[1])
+            if dist <= vision_radius:
+                messages.append({
+                    'type': 'danger_warning',
+                    'position': danger_pos,
+                    'importance': 0.9,
+                    'agent_id': self.agent_id
+                })
+        
+        # Self-censorship based on recent success
+        if self.message_success_history:
+            success_rate = np.mean(list(self.message_success_history))
+            if success_rate < 0.3 and random.random() < 0.5:
+                return None
+        
+        # Return highest priority message
+        if messages:
+            messages.sort(key=lambda m: m['importance'], reverse=True)
+            return messages[0]
+        return None
+    
+    def receive_message(self, message):
+        """Store received messages for decision-making"""
+        if message['type'] == 'food_alert':
+            self.received_food_alerts.append(message['position'])
+        elif message['type'] == 'danger_warning':
+            self.received_danger_warnings.append(message['position'])
+    
+    def decide_movement(self):
+        """Make movement decision based on received messages"""
+        # Strategy 1: Avoid dangers (highest priority)
+        if self.received_danger_warnings:
+            nearest_danger = min(
+                self.received_danger_warnings,
+                key=lambda d: abs(d[0] - self.position[0]) + abs(d[1] - self.position[1])
+            )
+            
+            dx = self.position[0] - nearest_danger[0]
+            dy = self.position[1] - nearest_danger[1]
+            
+            if abs(dx) > abs(dy):
+                return (1 if dx > 0 else -1, 0)
+            else:
+                return (0, 1 if dy > 0 else -1)
+        
+        # Strategy 2: Move toward food (medium priority)
+        if self.received_food_alerts:
+            nearest_food = min(
+                self.received_food_alerts,
+                key=lambda f: abs(f[0] - self.position[0]) + abs(f[1] - self.position[1])
+            )
+            
+            dx = nearest_food[0] - self.position[0]
+            dy = nearest_food[1] - self.position[1]
+            
+            if abs(dx) > abs(dy):
+                return (1 if dx > 0 else -1, 0)
+            else:
+                return (0, 1 if dy > 0 else -1)
+        
+        # Strategy 3: Random exploration (no information)
+        return random.choice([(0,1), (1,0), (0,-1), (-1,0)])
+    
+    def clear_messages(self):
+        """Clear messages at start of new timestep"""
+        self.received_food_alerts = []
+        self.received_danger_warnings = []
+    
+    def record_message_success(self, was_delivered):
+        self.message_success_history.append(1 if was_delivered else 0)
+
+
+# ============================================================================
+# PART 2: COORDINATION MAC (bandwidth-limited message delivery)
+# ============================================================================
+
+class CoordinationMAC:
+    """MAC that delivers messages within bandwidth constraints"""
+    
+    def __init__(self, agents, bandwidth_bits=1000):
+        self.agents = agents
+        self.bandwidth_bits = bandwidth_bits
+    
+    def coordinate(self, environment_state):
+        # Clear old messages
+        for agent in self.agents.values():
+            agent.clear_messages()
+        
+        # Generate candidate messages
+        candidate_messages = []
+        for agent_id, agent in self.agents.items():
+            message = agent.generate_message(environment_state)
+            if message:
+                importance = message.get('importance', 0.5)
+                message_bits = 100  # Fixed size
+                candidate_messages.append((importance, message_bits, agent_id, message))
+        
+        # Sort by importance
+        candidate_messages.sort(reverse=True, key=lambda x: x[0])
+        
+        # Deliver messages within bandwidth
+        delivered_messages = []
+        used_bits = 0
+        
+        for importance, message_bits, sender_id, message in candidate_messages:
+            if used_bits + message_bits <= self.bandwidth_bits:
+                # Deliver to ALL other agents
+                for receiver_id, receiver in self.agents.items():
+                    if receiver_id != sender_id:
+                        receiver.receive_message(message)
+                
+                delivered_messages.append((sender_id, message))
+                used_bits += message_bits
+                self.agents[sender_id].record_message_success(True)
+            else:
+                # Bandwidth exhausted - message dropped
+                self.agents[sender_id].record_message_success(False)
+        
+        return {
+            'delivered': len(delivered_messages),
+            'candidates': len(candidate_messages),
+            'bandwidth_used': used_bits
+        }
+
+
+# ============================================================================
+# PART 3: QUICK CHECK (verify inverted U-curve exists)
+# ============================================================================
+
+def quick_emergence_check():
+    """Quick test to verify inverted U-curve pattern"""
+    print("🔬 QUICK EMERGENCE CHECK")
+    print("-" * 80)
+    
+    bandwidths = [100, 1000, 10000]  # Low, medium, high
+    results = []
+    
+    for bw in bandwidths:
+        agents = {
+            f"agent_{i}": CoordinationAgent(f"agent_{i}", 15) 
+            for i in range(8)
+        }
+        mac = CoordinationMAC(agents, bandwidth_bits=bw)
+        
+        total_food = 0
+        total_dangers = 0
+        total_coordinated_moves = 0
+        total_moves = 0
+        
+        for episode in range(5):
+            # Reset agent positions
+            for agent in agents.values():
+                agent.position = (random.randint(0,14), random.randint(0,14))
+            
+            food = [(random.randint(0,14), random.randint(0,14)) for _ in range(10)]
+            dangers = [(random.randint(0,14), random.randint(0,14)) for _ in range(5)]
+            
+            for step in range(30):
+                env = {
+                    'time': step,
+                    'food_locations': food.copy(),
+                    'danger_locations': dangers.copy(),
+                    'world_size': 15
+                }
+                
+                mac.coordinate(env)
+                
+                for agent in agents.values():
+                    old_pos = agent.position
+                    dx, dy = agent.decide_movement()
+                    
+                    new_x = max(0, min(14, agent.position[0] + dx))
+                    new_y = max(0, min(14, agent.position[1] + dy))
+                    agent.position = (new_x, new_y)
+                    
+                    # Track coordination
+                    if food or dangers:
+                        moved_toward_goal = False
+                        
+                        if food:
+                            old_dist = min(abs(old_pos[0]-f[0])+abs(old_pos[1]-f[1]) for f in food)
+                            new_dist = min(abs(agent.position[0]-f[0])+abs(agent.position[1]-f[1]) for f in food)
+                            if new_dist < old_dist:
+                                moved_toward_goal = True
+                        
+                        if dangers:
+                            old_dist = min(abs(old_pos[0]-d[0])+abs(old_pos[1]-d[1]) for d in dangers)
+                            new_dist = min(abs(agent.position[0]-d[0])+abs(agent.position[1]-d[1]) for d in dangers)
+                            if new_dist > old_dist:
+                                moved_toward_goal = True
+                        
+                        if moved_toward_goal:
+                            total_coordinated_moves += 1
+                        total_moves += 1
+                    
+                    if agent.position in food:
+                        food.remove(agent.position)
+                        total_food += 1
+                    
+                    if agent.position in dangers:
+                        total_dangers += 1
+        
+        avg_food = total_food / 5
+        avg_dangers = total_dangers / 5
+        efficiency = avg_food - avg_dangers
+        coordination_rate = total_coordinated_moves / total_moves if total_moves > 0 else 0
+        
+        results.append({
+            'bandwidth': bw,
+            'efficiency': efficiency,
+            'coordination': coordination_rate
+        })
+        
+        print(f"Bandwidth {bw:5} bits → Efficiency: {efficiency:6.1f}, "
+              f"Coordination: {coordination_rate:.1%}")
+    
+    # Check for inverted U
+    efficiencies = [r['efficiency'] for r in results]
+    
+    print("\n" + "="*80)
+    print("PATTERN ANALYSIS")
+    print("="*80)
+    
+    has_sweet_spot = (
+        efficiencies[1] > efficiencies[0] and 
+        efficiencies[1] > efficiencies[2] and
+        (efficiencies[1] - efficiencies[0]) > 1.5 and
+        (efficiencies[1] - efficiencies[2]) > 1.5
+    )
+    
+    if has_sweet_spot:
+        print("✅ INVERTED U-CURVE DETECTED!")
+        print(f"   Low BW: {efficiencies[0]:.1f}")
+        print(f"   Optimal BW: {efficiencies[1]:.1f} ← PEAK")
+        print(f"   High BW: {efficiencies[2]:.1f}")
+        return True, results
+    else:
+        print("❌ NO CLEAR INVERTED U-CURVE")
+        return False, results
+
+
+# ============================================================================
+# PART 4: NUCLEAR CAUSAL TEST (A-B-C intervention)
+# ============================================================================
+
+def nuclear_causal_test(n_agents=12, n_episodes=15):
+    """The nuclear option: prove causality via intervention"""
+    print("\n" + "="*80)
+    print("☢️  NUCLEAR CAUSAL ABLATION TEST")
+    print("="*80)
+    
+    # Same agents across all phases
+    agents = {f"agent_{i}": CoordinationAgent(f"agent_{i}", 15) for i in range(n_agents)}
+    
+    def run_phase(bandwidth, phase_name):
+        mac = CoordinationMAC(agents, bandwidth_bits=bandwidth)
+        print(f"\n[{phase_name}] Bandwidth: {bandwidth} bits")
+        print("-" * 40)
+        
+        results = []
+        for episode in range(n_episodes):
+            for agent in agents.values():
+                agent.position = (random.randint(0,14), random.randint(0,14))
+            
+            food = [(random.randint(0,14), random.randint(0,14)) for _ in range(12)]
+            dangers = [(random.randint(0,14), random.randint(0,14)) for _ in range(6)]
+            
+            episode_food = 0
+            episode_dangers = 0
+            coordinated = 0
+            total = 0
+            
+            for step in range(40):
+                env = {'time': step, 'food_locations': food.copy(), 
+                       'danger_locations': dangers.copy(), 'world_size': 15}
+                
+                mac.coordinate(env)
+                
+                for agent in agents.values():
+                    old_pos = agent.position
+                    dx, dy = agent.decide_movement()
+                    agent.position = (max(0, min(14, agent.position[0]+dx)),
+                                    max(0, min(14, agent.position[1]+dy)))
+                    
+                    if food or dangers:
+                        if food:
+                            old_d = min(abs(old_pos[0]-f[0])+abs(old_pos[1]-f[1]) for f in food)
+                            new_d = min(abs(agent.position[0]-f[0])+abs(agent.position[1]-f[1]) for f in food)
+                            if new_d < old_d:
+                                coordinated += 1
+                        if dangers:
+                            old_d = min(abs(old_pos[0]-d[0])+abs(old_pos[1]-d[1]) for d in dangers)
+                            new_d = min(abs(agent.position[0]-d[0])+abs(agent.position[1]-d[1]) for d in dangers)
+                            if new_d > old_d:
+                                coordinated += 1
+                        total += 1
+                    
+                    if agent.position in food:
+                        food.remove(agent.position)
+                        episode_food += 1
+                    if agent.position in dangers:
+                        episode_dangers += 1
+            
+            results.append({
+                'efficiency': episode_food - episode_dangers,
+                'coordination': coordinated / total if total > 0 else 0
+            })
+            
+            if episode % 5 == 0:
+                print(f"  Ep {episode:2d}: Eff={results[-1]['efficiency']:5.1f}, "
+                      f"Coord={results[-1]['coordination']:.1%}")
+        
+        avg_eff = np.mean([r['efficiency'] for r in results])
+        avg_coord = np.mean([r['coordination'] for r in results])
+        print(f"\nAvg: Efficiency={avg_eff:.2f}, Coordination={avg_coord:.1%}")
+        return avg_eff, avg_coord
+    
+    # Run phases
+    a_eff, a_coord = run_phase(1000, "PHASE A: CONSTRAINED")
+    b_eff, b_coord = run_phase(100000, "PHASE B: UNCONSTRAINED")
+    c_eff, c_coord = run_phase(1000, "PHASE C: RE-CONSTRAINED")
+    
+    # Analysis
+    print("\n" + "="*80)
+    print("CAUSAL ANALYSIS")
+    print("="*80)
+    
+    drop = a_eff - b_eff
+    recovery = c_eff - b_eff
+    consistency = abs(a_eff - c_eff)
+    
+    print(f"\nEfficiency: A={a_eff:.1f}, B={b_eff:.1f}, C={c_eff:.1f}")
+    print(f"Coordination: A={a_coord:.1%}, B={b_coord:.1%}, C={c_coord:.1%}")
+    print(f"\nConstraint removal effect (A→B): {drop:+.1f}")
+    print(f"Constraint restoration effect (B→C): {recovery:+.1f}")
+    print(f"Consistency (A vs C): {consistency:.1f}")
+    
+    test1 = drop > 1.5
+    test2 = recovery > 1.5
+    test3 = consistency < 2.5
+    
+    passed = sum([test1, test2, test3])
+    
+    print(f"\nTests passed: {passed}/3")
+    print(f"  Removal hurts: {'✅' if test1 else '❌'}")
+    print(f"  Restoration helps: {'✅' if test2 else '❌'}")
+    print(f"  Consistent: {'✅' if test3 else '❌'}")
+    
+    if passed >= 2:
+        print("\n🎆 CAUSALITY CONFIRMED!")
+        print("   Bandwidth constraints CAUSE coordination emergence.")
+        return True
+    else:
+        print("\n❌ CAUSALITY NOT ESTABLISHED")
+        return False
+
+
+# ============================================================================
+# MAIN EXECUTION
+# ============================================================================
+
+if __name__ == "__main__":
+    print("="*80)
+    print(" GCN HYPOTHESIS VALIDATION: CONSTRAINT-DRIVEN EMERGENCE")
+    print("="*80)
+    
+    # Step 1: Quick check
+    has_pattern, _ = quick_emergence_check()
+    
+    if has_pattern:
+        # Step 2: Nuclear test
+        print("\n🚀 Pattern confirmed, deploying nuclear causal test...")
+        is_causal = nuclear_causal_test(n_agents=12, n_episodes=15)
+    else:
+        print("\n⚠️  Basic pattern not detected, skipping causal test")
