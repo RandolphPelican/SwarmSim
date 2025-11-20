@@ -1,310 +1,178 @@
-# SwarmSim – Multi-Agent Coordination Simulator
+# 🐝 **SwarmSim**
+### *Interactive Multi-Agent Simulation Engine (Fun + Research Grade)*
 
-[![Try App](https://img.shields.io/badge/▶️%20Try%20App-Streamlit-blue?style=for-the-badge)](https://replit.com/@johndstabler/NumpyDequeRandom)
+[![Run App](https://img.shields.io/badge/Try%20App-Run-blue?style=for-the-badge)](#)
+<!-- Replace # with your Replit link -->
 
-A research-grade simulation framework for studying how autonomous agents coordinate under communication and bandwidth constraints. SwarmSim visualizes emergent behavior, tests hypotheses, and generates analytics on collaboration efficiency across different agent strategies.
-## Overview
+SwarmSim is an experiment in **multi-agent coordination**, **emergent behavior**, and **scenario-driven simulations** — designed for **everyday people**, **tinkerers**, **AI researchers**, and **students** alike.
 
-This tool simulates autonomous agents navigating a 2D grid world where they must collect food and avoid dangers while communicating through bandwidth-constrained message channels. The core research question: How do communication bandwidth constraints affect emergent coordination behaviors?
+It mixes **Oregon Trail–style scenario building** with **research-grade data collection**, allowing you to *play*, *observe*, and *analyze* how groups of agents evolve under different conditions.
 
-The system tests for inverted U-curve relationships between bandwidth and coordination efficiency - the hypothesis that moderate constraints lead to optimal coordination.
+---
 
-## Features
+# 🌟 What Is SwarmSim?
 
-- Interactive web interface powered by Streamlit
-- 6 distinct agent strategies (Greedy, Cautious, Balanced, Explorer, Cooperative, Q-Learning)
-- Built-in statistical analysis (ANOVA, regression analysis, effect size calculations)
-- Batch experimentation system with automated report generation
-- Advanced visualizations (position heatmaps, agent trajectories, decision analysis, message flow networks)
-- Causal testing framework (A-B-C intervention analysis)
-- Reinforcement learning implementation (Q-learning with configurable parameters)
-- Data export functionality (CSV and JSON formats)
+SwarmSim lets you:
 
-## Installation
+- Create simple or complex **scenarios**
+- Adjust environmental **variables**
+- Watch agents interact through **animated visualizations** (future)
+- Collect **logs, measurements, and scientific output data**
+- Explore how communication, resources, constraints, and randomness shape outcomes
 
-### Requirements
+It’s part demonstration, part toy, part scientific toolkit.
 
-- Python 3.8 or higher
-- pip package manager
+---
 
-### Setup
+# 🧠 **Plain-Language Explanations**
 
-Clone the repository:
+SwarmSim is built for both technical and non-technical users.  
+Below are simple explanations of concepts used throughout the project.
+
+---
+
+## 📡 **Bandwidth (Simple Explanation)**  
+**Bandwidth** is how *much information* your agents can send or receive at once.  
+Think of it like how many lanes a highway has:
+
+- More lanes → more cars (information) move smoothly  
+- Fewer lanes → traffic jams and slowdowns  
+
+In the sim, bandwidth limits **how effectively agents coordinate**.
+
+---
+
+## ⏱️ **Timestep (Simple Explanation)**  
+A **timestep** is how often the simulation “ticks,” similar to:
+
+- A movie frame  
+- A beat in music  
+- A turn in a board game  
+
+Small timestep → smoother, more detailed changes  
+Large timestep → faster but chunkier changes
+
+This sets the pace and resolution of the simulation.
+
+---
+
+## 🎛️ **Variables (Simple Explanation)**  
+Variables are the **settings** you change before running a simulation:
+
+- Number of agents  
+- Resource availability  
+- Speed, vision, or hearing range  
+- Communication limits  
+- Environment shape or difficulty  
+- Randomness levels  
+
+They shape how each run plays out.
+
+---
+
+## 🌀 **Simulation (Simple Explanation)**  
+A **simulation** is simply a digital “what if?”
+
+The computer steps through your scenario and shows you what happens over time — safely, cheaply, and quickly.
+
+SwarmSim aims to make this process:
+
+- **Visual**
+- **Interactive**
+- **Easy to learn**
+- **Scientifically useful**
+
+---
+
+# ⚙️ **Technical Overview**
+
+SwarmSim includes:
+
+- **Agent models** — each with traits, choices, and internal states  
+- **Environment model** — grids/maps/world rules  
+- **Scenario engine** — loads parameters and rulesets  
+- **Simulation core** — runs timesteps & updates worlds  
+- **Visualization layer** — animations (in progress)  
+- **Data exporter** — logs outputs for analysis  
+
+Designed for:
+
+- Easy reading  
+- Easy modification  
+- Easy addition of new agent types  
+- Compatibility with real research workflows  
+
+---
+
+# 🚀 Getting Started (Local Use)
+
+Clone the repo:
+
+```bash
+git clone https://github.com/RandolphPelican/SwarmSim.git
+cd SwarmSim
 ```
 
-git clone <https://github.com/RandolphPelican/coordination1.git>
-cd coordination1
+Run the simulation:
 
-```
-Install dependencies:
-```
-
-pip install -r requirements.txt
-
-```
-Or install manually:
+```bash
+python main.py
 ```
 
-pip install streamlit numpy pandas scipy statsmodels plotly
+Edit the README:
 
-```
-## Usage
-
-### Running the Simulator
-
-Start the web application:
+```bash
+nano README.md
 ```
 
-streamlit run app.py
+Push updates:
 
-```
-The interface will open in your browser at http://localhost:8501
-
-### Quick Start Guide
-
-**Tab 1: Interactive Simulation**
-- Configure agent parameters (strategy, count, vision radius)
-- Set environment parameters (world size, food, dangers)
-- Adjust bandwidth constraints
-- Run real-time simulations with visualization
-
-**Tab 2: Bandwidth Analysis**
-- Test the inverted U-curve hypothesis
-- Run automated bandwidth sweeps
-- View statistical analysis (ANOVA, regression)
-- Export results for publication
-
-**Tab 3: Causal Testing**
-- Run A-B-C intervention experiments
-- Test whether constraints CAUSE coordination
-- Calculate effect sizes and statistical significance
-
-**Tab 4: Analytics Dashboard**
-- View performance metrics over time
-- Track message delivery rates
-- Analyze coordination patterns
-- Compare agent efficiency
-
-**Tab 5: Behavior Analysis**
-- Position heatmaps (where agents spend time)
-- Trajectory visualization (movement patterns)
-- Decision heatmaps (spatial decision analysis)
-- Message flow networks (communication patterns)
-
-**Tab 6: Batch Experiments**
-- Configure multi-parameter sweeps
-- Run large-scale experiments automatically
-- Generate formatted research reports
-- Export comprehensive datasets
-
-**Tab 7: Q-Learning**
-- Train reinforcement learning agents
-- Visualize Q-value evolution
-- Test adaptive strategies under bandwidth constraints
-- Compare learned vs hand-coded strategies
-
-**Tab 8: Data Export**
-- Export raw simulation data (CSV)
-- Export experiment configurations (JSON)
-- Download agent trajectories and message logs
-- Generate reproducibility packages
-
-## Example Experiments
-
-### Testing the Inverted U-Curve
-
-1. Go to Tab 2 (Bandwidth Analysis)
-2. Select "Detailed (7 points)" for bandwidth range
-3. Set Agent Strategy to "Cooperative"
-4. Set Agents to 12, Episodes to 20
-5. Click "Run Bandwidth Sweep"
-6. Examine the graph for peak at moderate bandwidth
-
-### Comparing Agent Strategies
-
-1. Go to Tab 1 (Interactive Simulation)
-2. Run simulation with Strategy = "Greedy"
-3. Record efficiency score
-4. Change Strategy to "Cautious", "Balanced", "Cooperative"
-5. Compare performance under same bandwidth
-
-### Causal Intervention Test
-
-1. Go to Tab 3 (Causal Testing)
-2. Set Phase A Bandwidth = 1000 bits
-3. Set Phase B Bandwidth = 100000 bits (unlimited)
-4. Set Phase C Bandwidth = 1000 bits
-5. Run test - if A > B and C > B, constraint is causal
-
-## Research Applications
-
-This framework is designed for investigating:
-
-- Emergence in multi-agent systems
-- Communication network optimization
-- Swarm robotics coordination
-- Distributed artificial intelligence
-- Collective intelligence mechanisms
-- Information theory in agent coordination
-- Bandwidth constraints in real-world systems
-
-## Technical Architecture
-
-**Core Components:**
-
-- simulation_core.py - Main simulation engine with event-driven loop
-- agent_architectures.py - Pluggable agent strategy implementations
-- statistical_analysis.py - ANOVA, regression, and causal analysis tools
-- advanced_visualizations.py - Heatmaps, trajectories, network graphs
-- batch_experiments.py - Automated parameter sweep system
-- rl_agent.py - Q-learning reinforcement learning implementation
-- simulation_logger.py - Comprehensive event logging system
-
-**Design Principles:**
-
-- Modular architecture with strategy pattern for agents
-- Centralized state management for reproducibility
-- Event-driven simulation with deterministic random seeding
-- Priority-based message routing with bandwidth budgeting
-- In-memory data storage for fast iteration
-
-## Configuration Parameters
-
-**Environment:**
-- world_size: Grid dimensions (default: 15x15)
-- food_count: Number of food items (default: 12)
-- danger_count: Number of dangers (default: 8)
-
-**Agents:**
-- agent_count: Number of agents (default: 12)
-- vision_radius: How far agents can see (default: 3)
-- strategy: Decision-making approach (6 options)
-
-**Communication:**
-- bandwidth_bits: Bits available per timestep (default: 1000)
-- message_size: Bits per message (default: 100)
-- self_censorship: Agents adapt to delivery failure
-
-**Simulation:**
-- steps_per_episode: Timesteps in each run (default: 50)
-- episodes: Number of replications (default: 10)
-- random_seed: For reproducibility (optional)
-
-## Data Export Format
-
-**CSV Output Includes:**
-- Episode number and timestep
-- Agent positions and states
-- Messages sent and delivered
-- Food collected and dangers encountered
-- Coordination events and efficiency metrics
-
-**JSON Output Includes:**
-- Complete parameter configuration
-- Agent strategy specifications
-- Statistical test results
-- Experiment metadata
-
-## Performance Considerations
-
-**Typical Performance:**
-- Single episode (12 agents, 50 steps): ~0.5 seconds
-- Bandwidth sweep (7 points, 20 episodes each): ~2 minutes
-- Batch experiment (100 configurations): ~15 minutes
-- Q-learning training (1000 episodes): ~5 minutes
-
-**Optimization Tips:**
-- Use fixed random seeds for reproducibility
-- Reduce episodes for initial testing
-- Use batch experiments for large parameter sweeps
-- Export data for offline analysis
-
-## Troubleshooting
-
-**Issue: Simulation is slow**
-- Reduce number of agents
-- Decrease steps per episode
-- Lower batch experiment size
-
-**Issue: No inverted U-curve detected**
-- Increase agent count (more messages = bandwidth matters more)
-- Use "Cooperative" strategy (most communication-dependent)
-- Adjust food/danger ratio (avoid survival mode)
-- Add message noise at high bandwidth
-
-**Issue: All bandwidths perform similarly**
-- Check if agents are using messages (view message delivery rate)
-- Reduce vision radius (increase dependence on communication)
-- Ensure bandwidth range is sufficiently wide (50 to 50000 bits)
-
-## Citation
-
-If you use this tool in your research, please cite:
+```bash
+git add .
+git commit -m "Update README and docs"
+git push
 ```
 
-@software{coordination_simulator_2025,
-John Stabler
-Multi-Agent Coordination Simulator: A Framework for Testing Constraint-Driven Emergence
-2025
-https://github.com/RandolphPelican/coordination1
-version = {1.0}
-}
+---
+
+# 🧩 Project Structure
 
 ```
-## Contributing
+SwarmSim/
+│
+├── main.py           # entry point
+├── simulation/       # core logic
+├── agents/           # agent models
+├── environment/      # world & map rules
+├── data/             # output logs & analytics
+├── assets/           # visuals / animations (future)
+└── README.md
+```
 
-Contributions are welcome! Please:
+---
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+# 🎨 Roadmap
 
-## License
+Planned features:
 
-MIT License - see LICENSE file for details
+- 2D animated simulation view  
+- Scenario presets (“Famine Run”, “Signal Jam”, “Resource Boom”)  
+- UI sliders & controls for variables  
+- Oregon Trail–style events and outcomes  
+- CSV/JSON export for research  
+- Replay & slow-motion modes  
+- Agent personality traits  
+- Multi-step campaign mode  
 
-## Contact
+---
 
-Questions, bug reports, or research collaborations:
-- Open an issue on GitHub
-- Email: Johndstabler@gmail.com
-- Twitter:@SkilletBenz
+# 📄 License
 
-## Acknowledgments
+MIT License — free for anyone to use or modify.
 
-Built with:
-- Streamlit (web framework)
-- NumPy & Pandas (data processing)
-- SciPy & statsmodels (statistical analysis)
-- Plotly (interactive visualizations)
+---
 
-Inspired by research in:
-- Complexity science
-- Multi-agent systems
-- Emergence theory
-- Information theory
-- Swarm intelligence
-_ Scale Gap analysis 
-## Roadmap
+# 📬 Contact
 
-**Planned Features:**
-- 3D environment visualization
-- Additional agent learning algorithms (DQN, PPO)
-- Real-time collaboration mode (multiple users)
-- Custom agent strategy builder (GUI)
-- Integration with physics engines
-- Network topology variations
-- Mobile app version
-
-## Version History
-
-**v1.0.0 (November 2025)**
-- Initial release
-- 6 agent strategies
-- 8 interactive tabs
-- Comprehensive statistical testing
-- Batch experimentation system
-- Q-learning implementation
-- Advanced visualizations
+Maintainer: **John Stabler**  
+GitHub: https://github.com/RandolphPelican
