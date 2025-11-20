@@ -1,116 +1,66 @@
-# 🐝 **SwarmSim**
-### *Interactive Multi-Agent Simulation Engine (Fun + Research Grade)*
+# 🤖 **SwarmSim**
+### *Multi-Agent Simulation for AI, Robotics, and Cognitive Science*
 
-[![Run App](https://img.shields.io/badge/Try%20App-Run-blue?style=for-the-badge)](#)
-<!-- Replace # with your Replit link -->
+[![Try App](https://img.shields.io/badge/Try%20App-Run-blue?style=for-the-badge)]https://replit.com/@johndstabler/NumpyDequeRandom
 
-SwarmSim is an experiment in **multi-agent coordination**, **emergent behavior**, and **scenario-driven simulations** — designed for **everyday people**, **tinkerers**, **AI researchers**, and **students** alike.
-
-It mixes **Oregon Trail–style scenario building** with **research-grade data collection**, allowing you to *play*, *observe*, and *analyze* how groups of agents evolve under different conditions.
-
----
-
-# 🌟 What Is SwarmSim?
-
-SwarmSim lets you:
-
-- Create simple or complex **scenarios**
-- Adjust environmental **variables**
-- Watch agents interact through **animated visualizations** (future)
-- Collect **logs, measurements, and scientific output data**
-- Explore how communication, resources, constraints, and randomness shape outcomes
-
-It’s part demonstration, part toy, part scientific toolkit.
+<p align="center">
+  <img src="assets/swarmsim_logo.svg" alt="SwarmSim Logo" width="360"/>
+</p>
 
 ---
 
-# 🧠 **Plain-Language Explanations**
+## 🌟 Overview
 
-SwarmSim is built for both technical and non-technical users.  
-Below are simple explanations of concepts used throughout the project.
+**SwarmSim** is a flexible **multi-agent simulation framework** designed for researchers, developers, and enthusiasts exploring:
 
----
+- **Swarm intelligence & robotics coordination**
+- **Emergent behaviors in multi-agent systems**
+- **Cognitive science and human/AI intention modeling**
+- **Information theory applications in agent networks**
 
-## 📡 **Bandwidth (Simple Explanation)**  
-**Bandwidth** is how *much information* your agents can send or receive at once.  
-Think of it like how many lanes a highway has:
-
-- More lanes → more cars (information) move smoothly  
-- Fewer lanes → traffic jams and slowdowns  
-
-In the sim, bandwidth limits **how effectively agents coordinate**.
+It combines **highly configurable simulations** with **interactive visualization**, **data collection**, and optional **game-like scenarios** for demonstration and teaching purposes.
 
 ---
 
-## ⏱️ **Timestep (Simple Explanation)**  
-A **timestep** is how often the simulation “ticks,” similar to:
+## ⚙️ Key Features
 
-- A movie frame  
-- A beat in music  
-- A turn in a board game  
-
-Small timestep → smoother, more detailed changes  
-Large timestep → faster but chunkier changes
-
-This sets the pace and resolution of the simulation.
-
----
-
-## 🎛️ **Variables (Simple Explanation)**  
-Variables are the **settings** you change before running a simulation:
-
-- Number of agents  
-- Resource availability  
-- Speed, vision, or hearing range  
-- Communication limits  
-- Environment shape or difficulty  
-- Randomness levels  
-
-They shape how each run plays out.
+- **Agent Strategies:** Multiple built-in behaviors (Greedy, Cautious, Explorer, Cooperative, Q-Learning)  
+- **Dynamic Environments:** 2D grid worlds with configurable resources, hazards, and communication constraints  
+- **Communication Modeling:** Adjustable bandwidth and information flow for emergent coordination analysis  
+- **Scenario Engine:** Run experiments with custom parameters, test interventions, and collect structured data  
+- **Batch Experiments:** Automated multi-run testing with statistical reporting (ANOVA, regression, effect sizes)  
+- **Data Export:** Save results in CSV/JSON for analysis, research, or further modeling  
+- **Visualization Tools:** Trajectories, heatmaps, message flows, agent states  
+- **Reinforcement Learning:** Q-Learning agents with adjustable hyperparameters  
+- **Interactive UI:** (future) sliders and scenario controls for real-time experimentation  
 
 ---
 
-## 🌀 **Simulation (Simple Explanation)**  
-A **simulation** is simply a digital “what if?”
+## 🧠 Plain-Language Concepts
 
-The computer steps through your scenario and shows you what happens over time — safely, cheaply, and quickly.
+**Bandwidth:** How much information agents can share at each timestep — think of it as lanes on a highway: wider = smoother coordination, narrower = bottlenecks.  
 
-SwarmSim aims to make this process:
+**Timestep:** A discrete “tick” in the simulation; each tick updates agent positions, decisions, and communications. Smaller timesteps = more detailed evolution.  
 
-- **Visual**
-- **Interactive**
-- **Easy to learn**
-- **Scientifically useful**
+**Variables:** Configurable parameters that determine agent behavior and environment conditions (number of agents, resource density, speed, communication limits, randomness).  
+
+**Simulation:** A digital “what-if” — a safe way to test hypotheses about coordination, communication, and collective intelligence.
 
 ---
 
-# ⚙️ **Technical Overview**
+## 🛠️ Installation & Setup
 
-SwarmSim includes:
-
-- **Agent models** — each with traits, choices, and internal states  
-- **Environment model** — grids/maps/world rules  
-- **Scenario engine** — loads parameters and rulesets  
-- **Simulation core** — runs timesteps & updates worlds  
-- **Visualization layer** — animations (in progress)  
-- **Data exporter** — logs outputs for analysis  
-
-Designed for:
-
-- Easy reading  
-- Easy modification  
-- Easy addition of new agent types  
-- Compatibility with real research workflows  
-
----
-
-# 🚀 Getting Started (Local Use)
-
-Clone the repo:
+Clone the repository:
 
 ```bash
 git clone https://github.com/RandolphPelican/SwarmSim.git
 cd SwarmSim
+```
+
+Install dependencies (Python 3.8+):
+
+```bash
+pip install -r requirements.txt
 ```
 
 Run the simulation:
@@ -119,60 +69,44 @@ Run the simulation:
 python main.py
 ```
 
-Edit the README:
-
-```bash
-nano README.md
-```
-
-Push updates:
-
-```bash
-git add .
-git commit -m "Update README and docs"
-git push
-```
-
 ---
 
-# 🧩 Project Structure
+## 📂 Project Structure
 
 ```
 SwarmSim/
 │
-├── main.py           # entry point
-├── simulation/       # core logic
-├── agents/           # agent models
-├── environment/      # world & map rules
-├── data/             # output logs & analytics
-├── assets/           # visuals / animations (future)
+├── main.py             # entry point
+├── simulation/         # core simulation engine
+├── agents/             # agent definitions and behaviors
+├── environment/        # environment & grid rules
+├── data/               # simulation outputs and logs
+├── assets/             # logos, visualizations, animation placeholders
+├── scenarios/          # presets & example setups
 └── README.md
 ```
 
 ---
 
-# 🎨 Roadmap
+## 🎮 Gameplay & Visualization (Optional)
 
-Planned features:
+SwarmSim supports **interactive visualization** for demonstration, teaching, and scenario testing:
 
-- 2D animated simulation view  
-- Scenario presets (“Famine Run”, “Signal Jam”, “Resource Boom”)  
-- UI sliders & controls for variables  
-- Oregon Trail–style events and outcomes  
-- CSV/JSON export for research  
-- Replay & slow-motion modes  
-- Agent personality traits  
-- Multi-step campaign mode  
+- Animated agent movement and trajectories  
+- Scenario presets with adjustable variables  
+- Graphical feedback for communication, coordination efficiency, and resource utilization  
+
+These features are **secondary to the scientific research focus**, but make the simulations approachable for wider audiences.
 
 ---
 
-# 📄 License
+## 📄 License
 
-MIT License — free for anyone to use or modify.
+MIT License — free to use, modify, and distribute.
 
 ---
 
-# 📬 Contact
+## 📬 Contact
 
 Maintainer: **John Stabler**  
-GitHub: https://github.com/RandolphPelican
+GitHub: [RandolphPelican](https://github.com/RandolphPelican)
