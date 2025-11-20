@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SwarmSim — Multi-Agent Swarm Simulation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="assets/swarmsim_logo.svg" alt="SwarmSim Logo" class="logo">
+    <h1>SwarmSim</h1>
+    <p>Research-grade multi-agent swarm simulation for AI, robotics, cognitive science, and information theory — interactive and exploratory.</p>
+    <a href="YOUR_REPLIT_APP_LINK_HERE" class="btn">Try App</a>
+  </header>
+
+  <section id="features">
+    <h2>Features</h2>
+    <ul>
+      <li>Simulate multiple autonomous agents in customizable environments</li>
+      <li>Test coordination strategies under communication constraints (bandwidth = communication)</li>
+      <li>Batch experiments with automated statistical analysis</li>
+      <li>Reinforcement learning agents with adjustable parameters</li>
+      <li>Scenario previews: set initial conditions and watch strategies play out (time step = one unit of simulation)</li>
+      <li>Export datasets for research or monetization</li>
+    </ul>
+  </section>
+
+  <section id="scenario">
+    <h2>Interactive Scenario Preview</h2>
+    <p>Adjust parameters below to see agent behaviors in real-time. Future updates will integrate visual animations and sliders.</p>
+    <div class="slider-container">
+      <label for="agentCount">Number of Agents:</label>
+      <input type="range" id="agentCount" min="2" max="20" value="6">
+      <span id="agentCountValue">6</span>
+    </div>
+    <div class="slider-container">
+      <label for="bandwidth">Communication Bandwidth:</label>
+      <input type="range" id="bandwidth" min="1" max="10" value="5">
+      <span id="bandwidthValue">5</span>
+    </div>
+  </section>
+
+  <section id="about">
+    <h2>About SwarmSim</h2>
+    <p>SwarmSim lets researchers and enthusiasts explore swarm coordination, cognitive emergence, and information theory.  
+       Interactive scenario previews allow experimentation while research-grade data is collected in the background.  
+       Future animation updates will visualize agent movements in real time.</p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 John Stabler | MIT License | <a href="mailto:john@example.com">Contact</a></p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
