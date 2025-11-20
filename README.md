@@ -1,7 +1,8 @@
-# Multi-Agent Coordination Simulator
+# SwarmSim – Multi-Agent Coordination Simulator
 
-A research-grade simulation framework for investigating constraint-driven emergence in multi-agent communication networks.
+[![Try App](https://img.shields.io/badge/▶️%20Try%20App-Streamlit-blue?style=for-the-badge)](https://replit.com/@johndstabler/NumpyDequeRandom)
 
+A research-grade simulation framework for studying how autonomous agents coordinate under communication and bandwidth constraints. SwarmSim visualizes emergent behavior, tests hypotheses, and generates analytics on collaboration efficiency across different agent strategies.
 ## Overview
 
 This tool simulates autonomous agents navigating a 2D grid world where they must collect food and avoid dangers while communicating through bandwidth-constrained message channels. The core research question: How do communication bandwidth constraints affect emergent coordination behaviors?
