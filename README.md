@@ -1,7 +1,6 @@
 # 🤖 **SwarmSim**
 ### *Multi-Agent Simulation for AI, Robotics, and Cognitive Science*
 
-[![Try App](https://img.shields.io/badge/Try%20App-Run-blue?style=for-the-badge)]https://replit.com/@johndstabler/NumpyDequeRandom
 
 <p align="center">
   <img src="assets/swarmsim_logo.svg" alt="SwarmSim Logo" width="360"/>
