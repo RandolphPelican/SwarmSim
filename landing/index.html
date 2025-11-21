@@ -1,57 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SwarmSim — Multi-Agent Swarm Simulation</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwarmSim – Multi-Agent Intelligence Simulator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header>
-    <img src="assets/swarmsim_logo.svg" alt="SwarmSim Logo" class="logo">
+
+<header>
+    <img src="assets/swarmsim_logo.svg" id="logo">
     <h1>SwarmSim</h1>
-    <p>Research-grade multi-agent swarm simulation for AI, robotics, cognitive science, and information theory — interactive and exploratory.</p>
-    <a href="YOUR_REPLIT_APP_LINK_HERE" class="btn">Try App</a>
-  </header>
+    <h2>Constraint-Driven Multi-Agent Intelligence</h2>
+</header>
 
-  <section id="features">
-    <h2>Features</h2>
-    <ul>
-      <li>Simulate multiple autonomous agents in customizable environments</li>
-      <li>Test coordination strategies under communication constraints (bandwidth = communication)</li>
-      <li>Batch experiments with automated statistical analysis</li>
-      <li>Reinforcement learning agents with adjustable parameters</li>
-      <li>Scenario previews: set initial conditions and watch strategies play out (time step = one unit of simulation)</li>
-      <li>Export datasets for research or monetization</li>
-    </ul>
-  </section>
+<canvas id="agentCanvas"></canvas>
 
-  <section id="scenario">
-    <h2>Interactive Scenario Preview</h2>
-    <p>Adjust parameters below to see agent behaviors in real-time. Future updates will integrate visual animations and sliders.</p>
-    <div class="slider-container">
-      <label for="agentCount">Number of Agents:</label>
-      <input type="range" id="agentCount" min="2" max="20" value="6">
-      <span id="agentCountValue">6</span>
+<section class="cta">
+    <a href="https://replit.com/@johndstabler/NumpyDequeRandom" class="try-button">
+        TRY APP
+    </a>
+</section>
+
+<section class="features">
+    <h3>Core Capabilities</h3>
+
+    <div class="feature-card">
+        <h4>🧠 Intelligent Agent Behaviors</h4>
+        <p>Greedy, Cautious, Explorer, Balanced, Cooperative, and full Q-Learning reinforcement agents.</p>
     </div>
-    <div class="slider-container">
-      <label for="bandwidth">Communication Bandwidth:</label>
-      <input type="range" id="bandwidth" min="1" max="10" value="5">
-      <span id="bandwidthValue">5</span>
+
+    <div class="feature-card">
+        <h4>📡 Bandwidth-Limited Communication</h4>
+        <p>Test real information-theory constraints and observe emergent coordination under pressure.</p>
     </div>
-  </section>
 
-  <section id="about">
-    <h2>About SwarmSim</h2>
-    <p>SwarmSim lets researchers and enthusiasts explore swarm coordination, cognitive emergence, and information theory.  
-       Interactive scenario previews allow experimentation while research-grade data is collected in the background.  
-       Future animation updates will visualize agent movements in real time.</p>
-  </section>
+    <div class="feature-card">
+        <h4>📊 Research-Grade Analytics</h4>
+        <p>ANOVA, regression, effect size, causal A–B–C testing, message complexity analysis.</p>
+    </div>
 
-  <footer>
-    <p>&copy; 2025 John Stabler | MIT License | <a href="mailto:john@example.com">Contact</a></p>
-  </footer>
+    <div class="feature-card">
+        <h4>🎮 Optional Animated Mode</h4>
+        <p>Beautiful sprite-based visuals for small agent populations (< 10 agents).</p>
+    </div>
 
-  <script src="script.js"></script>
+</section>
+
+<script src="script.js"></script>
+
 </body>
 </html>
