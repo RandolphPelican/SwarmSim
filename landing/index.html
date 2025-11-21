@@ -1,53 +1,106 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SwarmSim – Multi-Agent Intelligence Simulator</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>SwarmSim — Multi-Agent Simulation Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div id="root">
+    <header class="hero">
+      <div class="brand">
+        <img src="assets/swarmsim_logo.svg" alt="SwarmSim logo" class="logo" id="logo">
+        <div class="brand-text">
+          <h1>SwarmSim</h1>
+          <p class="subtitle">Constraint-driven multi-agent simulation — AI · Robotics · Cognitive systems · Information theory</p>
+          <p class="byline">Built by <strong>StableTech Enterprises</strong></p>
+        </div>
+      </div>
 
-<header>
-    <img src="assets/swarmsim_logo.svg" id="logo">
-    <h1>SwarmSim</h1>
-    <h2>Constraint-Driven Multi-Agent Intelligence</h2>
-</header>
+      <div class="hero-cta">
+        <a id="try-app" class="btn primary" href="https://replit.com/@johndstabler/NumpyDequeRandom" target="_blank" rel="noopener">Try App</a>
+        <a class="btn ghost" href="https://github.com/RandolphPelican/SwarmSim" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </header>
 
-<canvas id="agentCanvas"></canvas>
+    <main class="content">
+      <section class="panel">
+        <div class="panel-left">
+          <h2>Live demo & quick controls</h2>
+          <p class="lead">Interactive demo mode (animated) for small runs ≤10 agents. Larger runs switch to research/data mode (visuals off) to preserve compute.</p>
 
-<section class="cta">
-    <a href="https://replit.com/@johndstabler/NumpyDequeRandom" class="try-button">
-        TRY APP
-    </a>
-</section>
+          <div class="controls">
+            <div class="row">
+              <label>Agents
+                <input id="agentCount" type="number" min="1" max="10000" value="5">
+              </label>
+              <label>Greedy %
+                <input id="pGreedy" type="number" min="0" max="100" value="50">
+              </label>
+              <label>Cautious %
+                <input id="pCautious" type="number" min="0" max="100" value="25">
+              </label>
+              <label>Explorer %
+                <input id="pExplorer" type="number" min="0" max="100" value="25">
+              </label>
+            </div>
 
-<section class="features">
-    <h3>Core Capabilities</h3>
+            <div class="row">
+              <label>Food total
+                <input id="foodCount" type="number" min="0" max="200" value="9">
+              </label>
+              <label>Danger total
+                <input id="dangerCount" type="number" min="0" max="200" value="5">
+              </label>
+            </div>
 
-    <div class="feature-card">
-        <h4>🧠 Intelligent Agent Behaviors</h4>
-        <p>Greedy, Cautious, Explorer, Balanced, Cooperative, and full Q-Learning reinforcement agents.</p>
-    </div>
+            <div class="buttons">
+              <button id="spawnBtn" class="btn">Spawn / Reset</button>
+              <button id="startBtn" class="btn primary">Run</button>
+              <button id="pauseBtn" class="btn ghost">Pause</button>
+            </div>
+          </div>
+        </div>
 
-    <div class="feature-card">
-        <h4>📡 Bandwidth-Limited Communication</h4>
-        <p>Test real information-theory constraints and observe emergent coordination under pressure.</p>
-    </div>
+        <div class="panel-right">
+          <div class="canvas-wrap">
+            <canvas id="simCanvas" aria-label="SwarmSim demo canvas"></canvas>
+            <div class="overlay">Mode: <span id="modeLabel">demo</span> • Tick: <span id="tick">0</span></div>
+          </div>
 
-    <div class="feature-card">
-        <h4>📊 Research-Grade Analytics</h4>
-        <p>ANOVA, regression, effect size, causal A–B–C testing, message complexity analysis.</p>
-    </div>
+          <div class="stats">
+            <div>Agents: <span id="statAgents">0</span></div>
+            <div>Food: <span id="statFood">0</span></div>
+            <div>Danger: <span id="statDanger">0</span></div>
+            <div>Score: <span id="statScore">0</span></div>
+          </div>
+        </div>
+      </section>
 
-    <div class="feature-card">
-        <h4>🎮 Optional Animated Mode</h4>
-        <p>Beautiful sprite-based visuals for small agent populations (< 10 agents).</p>
-    </div>
+      <section class="features">
+        <h3>Core capabilities</h3>
+        <ul>
+          <li>Built-in agent types: <strong>Greedy</strong>, <strong>Cautious</strong>, <strong>Explorer</strong> (extendable)</li>
+          <li>Bandwidth & timestep knobs to model communication constraints</li>
+          <li>Batch runs and exportable CSV/JSON for full research workflows</li>
+          <li>Dual-mode: Animated demo for learning (≤10) — Data mode for research-scale runs</li>
+          <li>Pluggable RL agents (Q-Learning) and statistics toolkit</li>
+        </ul>
+      </section>
 
-</section>
+      <section class="about">
+        <h3>About</h3>
+        <p>SwarmSim is designed to let researchers, engineers, and curious minds explore emergent coordination. Small demo runs are animated and approachable; large experiments focus on performance and robust analytics. Use the controls to craft scenarios or click Try App for the full interactive console.</p>
+      </section>
+    </main>
 
-<script src="script.js"></script>
+    <footer class="site-footer">
+      <div>© 2025 StableTech Enterprises &mdash; <a href="mailto:john@example.com">Contact</a> &nbsp;•&nbsp; MIT License</div>
+    </footer>
+  </div>
 
+  <script src="script.js"></script>
 </body>
 </html>
